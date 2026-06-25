@@ -1,0 +1,29 @@
+{% extends '/Alunos/base_aluno.html' %}
+
+{% block title %}Lista dos Alunos{% endblock %}
+
+{% block content %}
+    <h1>Lista dos Alunos</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Matrícula</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for aluno in alunos %}
+            <tr>
+                <td>{{ aluno.id_aluno }}</td>
+                <td><a href="/alunos/{{ aluno.id_aluno }}">{{ aluno.nome }}</a></td>
+                <td>{{ aluno.matricula }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="/alunos/create">Cadastrar Novo Aluno</a>
+
+
+{% endblock %}

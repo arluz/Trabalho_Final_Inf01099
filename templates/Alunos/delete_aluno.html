@@ -1,0 +1,21 @@
+{% extends '/Alunos/base_aluno.html' %}
+
+{% block title %}Confirmar Exclusão - {{ aluno.nome }}{% endblock %}
+
+{% block content %}
+
+<h1>Deletar Aluno</h1>
+<p>Tem certeza de que deseja excluir o aluno <strong>{{ aluno.nome }}</strong>?</p>
+
+<form method="post">
+    <button type="submit">Confirmar Exclusão</button>
+    <br><br>
+    <a href="/alunos/{{ aluno.id_aluno }}">Cancelar</a>
+</form>
+
+<br><br>
+    <a href="/alunos/{{ aluno.id_aluno }}/update">Atualizar Aluno {{ aluno.nome }} </a>
+<br><br>
+    <a href="/alunos">Voltar a lista de alunos</a>
+
+{% endblock %}

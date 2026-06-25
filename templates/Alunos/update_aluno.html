@@ -1,0 +1,26 @@
+{% extends '/Alunos/base_aluno.html' %}
+
+{% block title %}Atualizar aluno - {{ aluno.nome }}{% endblock %}
+
+{% block content %}
+    <h1>Atualizar Aluno</h1>
+    <form method="POST" action="/alunos/{{ aluno.id_aluno }}/update">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" value="{{ aluno.nome }}" required '1                                           '
+        minlength="2"
+        pattern="^[A-Za-zÀ-ÿ\s]+$" 
+        title="O nome deve conter apenas letras e espaços. Números e caracteres especiais não são permitidos.">>
+        <br><br>
+        <label for="matricula">Matrícula:</label>
+        <input type="text" id="matricula" name="matricula" value="{{ aluno.matricula }}" required
+        pattern="\d+"
+        title="A matrícula deve conter apenas números.">>
+        <br><br>
+        <button type="submit">Atualizar</button>
+    </form>
+<br><br>
+    <a href="/alunos/{{ aluno.id_aluno }}/delete">Deletar Aluno {{ aluno.nome }} </a>
+<br><br>
+    <a href="/alunos">Voltar a lista de alunos</a>
+
+{% endblock %}
