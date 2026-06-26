@@ -1,0 +1,20 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Detalhes da Disciplina{% endblock %}
+
+{% block content %}
+    <h1>Detalhes da Disciplina</h1>
+    <p><strong>ID:</strong> {{ disciplina.id_disciplina }}</p>
+    <p><strong>Nome:</strong> {{ disciplina.nome }}</p>
+    <p><strong>Código:</strong> {{ disciplina.codigo }}</p>
+    <p><strong>Área:</strong> {{ disciplina.area }}</p>
+    <p></p><strong>Conteúdos:</strong></p>
+    <p></p><strong>Habilidades:</strong></p>
+    <br><br>
+    <a href="/disciplinas/{{ disciplina.id_disciplina }}/update">Editar {{ disciplina.nome }}</a>
+    <br><br>
+    <a href="/disciplinas/{{ disciplina.id_disciplina }}/delete">Deletar {{ disciplina.nome }}</a>
+    <br><br>
+    <a href="/disciplinas">Voltar a lista de disciplinas</a>
+
+{% endblock %}

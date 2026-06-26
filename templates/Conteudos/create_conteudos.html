@@ -1,0 +1,44 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Criar Novo Conteúdo{% endblock %}
+
+{% block content %}
+
+    <h1>Cadastrar Novo Conteúdo</h1>
+    <form method="POST" action="/conteudos/create">
+
+        <label for="codigo">Código:</label>
+        <input 
+            id="codigo" 
+            name="codigo" 
+            required 
+            minlength="2"
+            pattern="^[A-Za-z0-9-]+$" 
+            title="O código deve conter apenas letras, números e hífens.">
+        <br><br>
+        <label for="nivel">Nível:</label>
+        <input 
+            id="nivel" 
+            name="nivel" 
+            required 
+            type="number" 
+            min="0"
+            max="2"
+            pattern="\d+"
+            title="O nível de essencialidade deve ser um número entre 0 e 2.">
+        <br><br>
+
+        <label for="descricao">Descrição:</label>
+        <textarea 
+            id="descricao" 
+            name="descricao" 
+            required            
+            title="A descrição é obrigatória."></textarea>
+        <br><br>
+        
+        <button type="submit">Cadastrar</button>
+    </form>
+    <br>
+    <a href="/conteudos">Voltar a lista de conteúdos</a>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Excluir Disciplina{% endblock %}
+
+{% block content %}
+
+    <h1>Excluir Disciplina</h1>
+    <p>Tem certeza de que deseja excluir a disciplina "{{ disciplina.nome }}"?</p>
+    <form method="POST" action="{{ url_for('disciplinas.delete_disciplina', id_disciplina=disciplina.id_disciplina) }}">
+        <input type="submit" value="Excluir">
+        <a href="{{ url_for('disciplinas.list_disciplinas') }}">Cancelar</a>
+    </form>
+    <br>
+    <a href="{{ url_for('disciplinas.list_disciplinas') }}">Voltar para a lista de disciplinas</a>
+
+{% endblock %}

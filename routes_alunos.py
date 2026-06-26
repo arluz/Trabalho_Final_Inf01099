@@ -20,7 +20,7 @@ def create_alunos():
         matricula = request.form.get('matricula', '').strip()
 
         if not nome or not matricula:
-            flash("Nome e matrícula são obrigatórios.", "error")
+            flash("Nome e matrícula são campos obrigatórios.", "error")
             return render_template('Alunos/create_alunos.html')
 
         try:

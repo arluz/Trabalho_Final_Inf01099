@@ -1,0 +1,36 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Criar Nova Disciplina{% endblock %}
+
+{% block content %}
+    <h1>Cadastrar Nova Disciplina</h1>
+    <form method="POST" action="/disciplinas/create">
+        <label for="nome">Nome:</label>
+        <input 
+        id="nome" 
+        name="nome" 
+        required 
+        minlength="2"
+        pattern="^[A-Za-zÀ-ÿ-\s]+$" 
+        title="O nome deve conter apenas letras e espaços. Números e caracteres especiais não são permitidos.">
+
+        <label for="codigo">Código:</label>
+        <input 
+        id="codigo" 
+        name="codigo" 
+        required
+        minlength="2">
+
+        <label for="area">Área:</label>
+        <input
+        id="area"
+        name="area"
+        minlength="2"
+        oninput="this.value = this.value.toUpperCase();"
+        pattern= "^[A-Za-zÀ-ÿ]+$"
+        title="A área deve conter apenas letras. Números e caracteres especiais não são permitidos.">
+
+        <input type="submit" value="Cadastrar">
+    </form>
+    <br>
+{% endblock %}

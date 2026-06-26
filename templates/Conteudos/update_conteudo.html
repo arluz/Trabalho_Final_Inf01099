@@ -1,0 +1,45 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Editar Conteúdo{% endblock %}
+
+{% block content %}
+    <h1>Editar Conteúdo</h1>
+    <form method="POST" action="/conteudos/{{ conteudo.id_conteudo }}/update">
+        <p>Para alterar o vinculo deste conteúdo com a disciplina, selecione a disciplina abaixo:</p>
+        <a href="/disciplina/{{ conteudo.id_disciplina }}">Ver Disciplina</a>
+
+        <label for="codigo">Código:</label>
+        <input 
+            id="codigo" 
+            name="codigo" 
+            required 
+            minlength="2"
+            pattern="^[A-Za-z0-9-]+$" 
+            title="O código deve conter apenas letras, números e hífens.">
+        <br><br>
+
+        <label for="nivel">Nível de Essencialidade:</label>
+        <input
+            id="nivel" 
+            name="nivel" 
+            required 
+            type="number" 
+            min="0"
+            max="2"
+            pattern="\d+"
+            title="O nível de essencialidade deve ser um número entre 0 e 2.">
+        <br><br>
+
+        <label for="descricao">Descrição:</label>
+        <textarea 
+            id="descricao" 
+            name="descricao" 
+            required            
+            title="A descrição é obrigatória."></textarea>
+        <br><br>
+
+        <button type="submit">Atualizar</button>
+    </form>
+    <br>
+    <a href="/conteudos">Voltar a lista de conteúdos</a>
+{% endblock %}
