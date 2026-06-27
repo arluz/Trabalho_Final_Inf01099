@@ -1,7 +1,6 @@
 from flask import Flask, Blueprint, request, render_template, redirect, url_for, abort, flash
 from sqlalchemy.exc import IntegrityError
 import models
-import re
 
 alunos_bp = Blueprint('alunos', __name__, url_prefix='/alunos') 
 

@@ -1,0 +1,18 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Detalhar Habilidades{% endblock %}
+
+{% block content %}
+    <h1>Detalhes da Habilidade</h1>
+    <p><strong>ID da Habilidade:</strong> {{ habilidade.id_habilidade }}</p>
+    <p><strong>Código:</strong> {{ habilidade.codigo }}</p>
+    <p><strong>Nível de Essencialidade:</strong> {{ habilidade.essencialidade }}</p>
+    <p><strong>Descrição:</strong> {{ habilidade.descricao }}</p>
+    <p><strong>Proficiência:</strong> {{ habilidade.proficiencia }}</p>
+    <br><br>
+    <a href="/habilidades/{{ habilidade.id_habilidade }}/update">Editar Habilidade</a>
+    <br><br>
+    <a href="/habilidades/{{ habilidade.id_habilidade }}/delete">Deletar Habilidade</a>
+    <br><br>
+    <a href="/habilidades">Voltar a lista de habilidades</a>
+{% endblock %}

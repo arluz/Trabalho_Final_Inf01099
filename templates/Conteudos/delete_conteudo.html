@@ -3,3 +3,13 @@
 {% block title %}Deletar Conteúdo{% endblock %}
 
 {% block content %}
+
+    <h1>Deletar Conteúdo</h1>
+    <p>Tem certeza de que deseja deletar o conteúdo com código: <strong>{{ conteudo.codigo }}</strong>?</p>
+    <form method="POST" action="/conteudos/{{ conteudo.id_conteudo }}/delete">
+        <button type="submit">Deletar</button>
+    </form>
+    <br>
+    <a href="/conteudos">Voltar a lista de conteúdos</a>
+
+{% endblock %}

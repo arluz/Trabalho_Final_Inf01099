@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 import models
 import re
 
-habilidades_bp = Blueprint('habilidades', __name__)
+habilidades_bp = Blueprint('habilidades', __name__, url_prefix='/habilidades')
 
 
 
@@ -19,16 +19,16 @@ def create_habilidades():
         
     if request.method == 'POST':
         codigo = request.form.get('codigo', '').strip()
-        nivel = request.form.get('nivel', '').strip()
+        essencialidade = request.form.get('essencialidade', '').strip()
         descricao = request.form.get('descricao', '').strip()
         proficiencia = request.form.get('proficiencia', '').strip()
 
-        if not codigo or not nivel or not descricao or not proficiencia:
+        if not codigo or not essencialidade or not descricao or not proficiencia:
             flash("Todos os campos são obrigatórios.", "error")
             return render_template('Habilidades/create_habilidades.html')
 
         try:
-            habilidade = models.Habilidades(codigo=codigo, nivel=nivel, descricao=descricao, proficiencia=proficiencia)
+            habilidade = models.Habilidades(codigo=codigo, essencialidade=essencialidade, descricao=descricao, proficiencia=proficiencia)
             models.db.session.add(habilidade)
             models.db.session.commit()
             flash(f"Habilidade {codigo} criada com sucesso!", "success")
@@ -56,7 +56,7 @@ def update_habilidade(id_habilidade):
 
     if request.method == 'POST':
         habilidade.codigo = request.form.get('codigo')
-        habilidade.nivel = request.form.get('nivel')
+        habilidade.essencialidade = request.form.get('essencialidade')
         habilidade.descricao = request.form.get('descricao')
         habilidade.proficiencia = request.form.get('proficiencia')
         models.db.session.commit()

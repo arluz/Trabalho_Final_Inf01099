@@ -1,10 +1,12 @@
 {% extends 'base_crud.html' %}
 
-{% block title %}Editar Conteúdo{% endblock %}
+{% block title %}Editar Habilidades{% endblock %}
 
 {% block content %}
-    <h1>Editar Conteúdo</h1>
-    <form method="POST" action="/conteudos/{{ conteudo.id_conteudo }}/update">
+
+    <h1>Editar Habilidades</h1>
+    <form method="POST" action="/habilidades/{{ habilidade.id_habilidade }}/update">
+        
         <label for="codigo">Código:</label>
         <input 
             id="codigo" 
@@ -23,8 +25,8 @@
         title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
             <option value="">Selecione...</option>
             <option value="Eletiva">Eletiva</option>
-            <option value="Essencial 1">Importante</option>
-            <option value="Essencial 2">Essencial</option>
+            <option value="Essencial 1">Essencial 1</option>
+            <option value="Essencial 2">Essencial 2</option>
         </select>
         <br><br>
 
@@ -36,11 +38,25 @@
             title="A descrição é obrigatória."></textarea>
         <br><br>
 
+        <label for="proficiencia">Proficiência:</label>
+        <select
+        id="proficiencia" 
+        name="proficiencia" 
+        required
+        title="A proficiência deve estar entre 'Compreender', 'Aplicar', 'Criar' e 'Avaliar'.">
+            <option value="Compreender">Compreender</option>
+            <option value="Aplicar">Aplicar</option>
+            <option value="Criar">Criar</option>
+            <option value="Avaliar">Avaliar</option>
+        </select>
+        <br><br>
+
         <button type="submit">Atualizar</button>
     </form>
     <br><br>
-    <p>Para alterar o vinculo deste conteúdo com a disciplina, selecione a disciplina abaixo:</p>
-        <a href="/disciplina/{{ conteudo.disciplina }}">Ver Disciplina Associada</a>
+
+    <p>Para alterar o vinculo desta habilidade com a disciplina, selecione a disciplina abaixo:</p>
+        <a href="/disciplinas/{{ habilidade.id_disciplina }}">Ver Disciplina</a>
     <br><br>
-    <a href="/conteudos">Voltar a lista de conteúdos</a>
+    <a href="/habilidades">Voltar a lista de habilidades</a>
 {% endblock %}

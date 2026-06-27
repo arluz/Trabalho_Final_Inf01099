@@ -1,0 +1,56 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Cadastrar Habilidade{% endblock %}
+
+{% block content %}
+<h1>Cadastrar Habilidade</h1>
+<form method="POST" action="/habilidades/create">
+
+    <label for="codigo">Código:</label>
+    <input 
+    id="codigo" 
+    name="codigo" 
+    required
+    pattern="^[A-Za-z0-9-]+$"
+    title="O código deve conter apenas letras, números e hífens.">
+    <br><br>
+
+    <label for="essencialidade">Essencialidade:</label>
+    <select
+    id="essencialidade" 
+    name="essencialidade" 
+    required
+    title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
+        <option value="">Selecione...</option>
+        <option value="Eletiva">Eletiva</option>
+        <option value="Essencial 1">Essencial 1</option>
+        <option value="Essencial 2">Essencial 2</option>
+    </select>
+    <br><br>
+
+    <label for="descricao">Descrição:</label>
+    <textarea 
+    id="descricao" 
+    name="descricao" 
+    required            
+    title="A descrição é obrigatória."></textarea>
+    <br><br>
+
+    <label for="proficiencia">Proficiência:</label>
+    <select
+    id="proficiencia" 
+    name="proficiencia" 
+    required
+    title="A proficiência deve estar entre 'Compreender', 'Aplicar', 'Criar' e 'Avaliar'.">
+        <option value="Compreender">Compreender</option>
+        <option value="Aplicar">Aplicar</option>
+        <option value="Criar">Criar</option>
+        <option value="Avaliar">Avaliar</option>
+    </select>
+    <br><br>
+    
+    <input type="submit" value="Cadastrar">
+</form>
+<br><br>
+<a href="/habilidades">Voltar para Lista de Habilidades</a>
+{% endblock %}

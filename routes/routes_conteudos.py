@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError
 import models
 import re
 
-conteudos_bp = Blueprint('conteudos', __name__)
+conteudos_bp = Blueprint('conteudos', __name__, url_prefix='/conteudos')
 
 @conteudos_bp.route("")
 def list_conteudos():
@@ -17,15 +17,15 @@ def create_conteudos():
         
     if request.method == 'POST':
         codigo = request.form.get('codigo', '').strip()
-        nivel = request.form.get('nivel', '').strip()
+        essencialidade = request.form.get('essencialidade', '').strip()
         descricao = request.form.get('descricao', '').strip()
 
-        if not codigo or not nivel or not descricao:
+        if not codigo or not essencialidade or not descricao:
             flash("Todos os campos são obrigatórios.", "error")
             return render_template('Conteudos/create_conteudos.html')
 
         try:
-            conteudo = models.Conteudos(id_disciplina=id_disciplina, codigo=codigo, nivel=nivel, descricao=descricao)
+            conteudo = models.Conteudos(codigo=codigo, essencialidade=essencialidade, descricao=descricao)
             models.db.session.add(conteudo)
             models.db.session.commit()
             flash(f"Conteúdo {codigo} criado com sucesso!", "success")
@@ -53,7 +53,7 @@ def update_conteudo(id_conteudo):
 
     if request.method == 'POST':
         conteudo.codigo = request.form.get('codigo')
-        conteudo.nivel = request.form.get('nivel')
+        conteudo.essencialidade = request.form.get('essencialidade')
         conteudo.descricao = request.form.get('descricao')
         models.db.session.commit()
         flash(f"Conteúdo {conteudo.codigo} atualizado com sucesso!", "success")

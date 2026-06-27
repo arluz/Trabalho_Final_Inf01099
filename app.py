@@ -2,11 +2,11 @@ from flask import Flask, request, render_template, redirect, url_for, abort, fla
 from sqlalchemy.exc import IntegrityError
 import models
 
-from routes_alunos import alunos_bp
-from routes_disciplinas import disciplinas_bp
-from routes_turmas import turmas_bp
-from routes_conteudos import conteudos_bp
-from routes_habilidades import habilidades_bp
+from routes.routes_alunos import alunos_bp
+from routes.routes_disciplinas import disciplinas_bp
+#from routes.routes_turmas import turmas_bp
+from routes.routes_conteudos import conteudos_bp
+from routes.routes_habilidades import habilidades_bp
 
 app = Flask(__name__)
 
@@ -19,7 +19,7 @@ models.db.init_app(app)
 
 app.register_blueprint(alunos_bp)
 app.register_blueprint(disciplinas_bp)
-app.register_blueprint(turmas_bp)
+#app.register_blueprint(turmas_bp)
 app.register_blueprint(conteudos_bp)
 app.register_blueprint(habilidades_bp)
 

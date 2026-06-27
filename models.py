@@ -2,6 +2,19 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+# Association tables for many-to-many relationships
+disciplinas_conteudos = db.Table(
+    'disciplinas_conteudos',
+    db.Column('id_disciplina', db.Integer, db.ForeignKey('disciplinas.id_disciplina'), primary_key=True),
+    db.Column('id_conteudo', db.Integer, db.ForeignKey('conteudos.id_conteudo'), primary_key=True)
+)
+
+disciplinas_habilidades = db.Table(
+    'disciplinas_habilidades',
+    db.Column('id_disciplina', db.Integer, db.ForeignKey('disciplinas.id_disciplina'), primary_key=True),
+    db.Column('id_habilidade', db.Integer, db.ForeignKey('habilidades.id_habilidade'), primary_key=True)
+)
+
 class Alunos(db.Model):
     __tablename__ = 'alunos'
 
@@ -17,6 +30,18 @@ class Disciplinas(db.Model):
     codigo = db.Column(db.String(10), unique=True, nullable=False)
     area = db.Column(db.String(2), nullable=False)
 
+    conteudos = db.relationship(
+        'Conteudos', 
+        secondary= disciplinas_conteudos, 
+        back_populates= 'disciplinas'
+        )
+    
+    habilidades = db.relationship(
+        'Habilidades', 
+        secondary=disciplinas_habilidades, 
+        back_populates='disciplinas'
+        )
+
 class Conteudos(db.Model):
     __tablename__ = 'conteudos'
 
@@ -25,7 +50,11 @@ class Conteudos(db.Model):
     essencialidade = db.Column(db.String(20), nullable=False)
     descricao = db.Column(db.String(200), nullable=False)
 
-    disciplina = db.relationship('Disciplinas', backref=db.backref('conteudos', lazy=True))
+    disciplinas = db.relationship(
+        'Disciplinas', 
+        secondary=disciplinas_conteudos, 
+        back_populates='conteudos'
+        )
 
 class Habilidades(db.Model):
     __tablename__ = 'habilidades'
@@ -36,9 +65,13 @@ class Habilidades(db.Model):
     descricao = db.Column(db.String(200), nullable=False)
     proficiencia = db.Column(db.String(20), nullable=False)
 
-    disciplina = db.relationship('Disciplinas', backref=db.backref('habilidades', lazy=True))
+    disciplinas = db.relationship(
+        'Disciplinas', 
+        secondary=disciplinas_habilidades, 
+        back_populates='habilidades'
+        )
 
-class DisciplinasConteudos(db.Model):
+class DisciplinasConteudos(db.Table):
     __tablename__ = 'disciplinas_conteudos'
 
     id_disciplina = db.Column(db.Integer,
@@ -48,7 +81,7 @@ class DisciplinasConteudos(db.Model):
                             db.ForeignKey('conteudos.id_conteudo'), 
                             primary_key=True)
 
-class DisciplinasHabilidades(db.Model):
+class DisciplinasHabilidades(db.Table):
     __tablename__ = 'disciplinas_habilidades'
 
     id_disciplina = db.Column(db.Integer,
@@ -69,10 +102,10 @@ class Turmas(db.Model):
     ano = db.Column(db.Integer, nullable=False)
     semestre = db.Column(db.Integer, nullable=False)
 
-class ALunoTurma(db.Model):
+class ALunoTurmas(db.Model):
     __tablename__ = 'aluno_turma'
 
-    __tableargs__ = (
+    __table_args__ = (
         db.UniqueConstraint('id_turma', 'id_aluno', name='unique_aluno_turma'),
     )
 
@@ -88,7 +121,7 @@ class ALunoTurma(db.Model):
 class NotasConteudos(db.Model):
     __tablename__ = 'notas_conteudos'
 
-    __tableargs__ = (
+    __table_args__ = (
         db.UniqueConstraint('id_aluno_turma', 'id_conteudo', name='unique_nota_conteudo'),
     )
 
@@ -99,12 +132,12 @@ class NotasConteudos(db.Model):
     id_conteudo = db.Column(db.Integer,
                             db.ForeignKey('conteudos.id_conteudo'),
                             nullable=False)
-    nota = db.Column(db.Float(4,2), nullable=True)
+    nota = db.Column(db.Float, nullable=True)
 
 class NotasHabilidades(db.Model):
     __tablename__ = 'notas_habilidades'
 
-    __tableargs__ = (
+    __table_args__ = (
         db.UniqueConstraint('id_aluno_turma', 'id_habilidade', name='unique_nota_habilidade'),
     )
 
@@ -115,4 +148,4 @@ class NotasHabilidades(db.Model):
     id_habilidade = db.Column(db.Integer,
                               db.ForeignKey('habilidades.id_habilidade'),
                               nullable=False)
-    nota = db.Column(db.Float(4,2), nullable=True)
+    nota = db.Column(db.Float, nullable=True)

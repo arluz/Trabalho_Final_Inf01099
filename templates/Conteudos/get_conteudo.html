@@ -4,10 +4,9 @@
 
 {% block content %}
     <h1>Detalhes do Conteúdo</h1>
-    <p><strong>ID:</strong> {{ conteudo.id_conteudo }}</p>
-    <p><strong>ID da Disciplina:</strong> {{ conteudo.id_disciplina }}</p>
+    <p><strong>ID do Conteúdo:</strong> {{ conteudo.id_conteudo }}</p>
     <p><strong>Código:</strong> {{ conteudo.codigo }}</p>
-    <p><strong>Nível de Essencialidade:</strong> {{ conteudo.nivel }}</p>
+    <p><strong>Nível de Essencialidade:</strong> {{ conteudo.essencialidade }}</p>
     <p><strong>Descrição:</strong> {{ conteudo.descricao }}</p>
     <br><br>
     <a href="/conteudos/{{ conteudo.id_conteudo }}/update">Editar Conteúdo</a>

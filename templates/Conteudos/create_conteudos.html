@@ -11,21 +11,22 @@
         <input 
             id="codigo" 
             name="codigo" 
-            required 
-            minlength="2"
+            required
             pattern="^[A-Za-z0-9-]+$" 
             title="O código deve conter apenas letras, números e hífens.">
         <br><br>
-        <label for="nivel">Nível:</label>
-        <input 
-            id="nivel" 
-            name="nivel" 
-            required 
-            type="number" 
-            min="0"
-            max="2"
-            pattern="\d+"
-            title="O nível de essencialidade deve ser um número entre 0 e 2.">
+        
+        <label for="essencialidade">Essencialidade:</label>
+        <select
+        id="essencialidade" 
+        name="essencialidade" 
+        required
+        title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
+            <option value="">Selecione...</option>
+            <option value="Eletiva">Eletiva</option>
+            <option value="Essencial 1">Essencial 1</option>
+            <option value="Essencial 2">Essencial 2</option>
+        </select>
         <br><br>
 
         <label for="descricao">Descrição:</label>

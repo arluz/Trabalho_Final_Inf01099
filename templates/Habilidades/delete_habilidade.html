@@ -1,0 +1,14 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Deletar Habilidades{% endblock %}
+
+{% block content %}
+    <h1>Deletar Habilidade</h1>
+    <p>Tem certeza de que deseja deletar a habilidade com ID {{ habilidade.id_habilidade }}?</p>
+    <form method="POST" action="/habilidades/{{ habilidade.id_habilidade }}/delete">
+        <input type="submit" value="Deletar">
+    </form>
+    <br><br>
+    <a href="/habilidades">Voltar para Lista de Habilidades</a>
+    
+{% endblock %}
