@@ -1,11 +1,8 @@
 from flask import Flask, Blueprint, request, render_template, redirect, url_for, abort, flash
 from sqlalchemy.exc import IntegrityError
 import models
-import re
 
 habilidades_bp = Blueprint('habilidades', __name__, url_prefix='/habilidades')
-
-
 
 @habilidades_bp.route("")
 def list_habilidades():

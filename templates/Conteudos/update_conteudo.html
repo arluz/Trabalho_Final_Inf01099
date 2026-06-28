@@ -8,7 +8,8 @@
         <label for="codigo">Código:</label>
         <input 
             id="codigo" 
-            name="codigo" 
+            name="codigo"
+            value="{{ conteudo.codigo }}" 
             required 
             minlength="2"
             pattern="^[A-Za-z0-9-]+$" 
@@ -18,13 +19,13 @@
         <label for="essencialidade">Essencialidade:</label>
         <select
         id="essencialidade" 
-        name="essencialidade" 
+        name="essencialidade"
         required
         title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
             <option value="">Selecione...</option>
             <option value="Eletiva">Eletiva</option>
-            <option value="Essencial 1">Importante</option>
-            <option value="Essencial 2">Essencial</option>
+            <option value="Essencial 1">Essencial 1</option>
+            <option value="Essencial 2">Essencial 2</option>
         </select>
         <br><br>
 
@@ -32,6 +33,7 @@
         <textarea 
             id="descricao" 
             name="descricao" 
+            value="{{ conteudo.descricao }}"
             required            
             title="A descrição é obrigatória."></textarea>
         <br><br>

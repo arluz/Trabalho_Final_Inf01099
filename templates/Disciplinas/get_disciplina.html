@@ -8,9 +8,24 @@
     <p><strong>Nome:</strong> {{ disciplina.nome }}</p>
     <p><strong>Código:</strong> {{ disciplina.codigo }}</p>
     <p><strong>Área:</strong> {{ disciplina.area }}</p>
-    <p></p><strong>Conteúdos:</strong></p>
+    <p><strong>Conteúdos:</strong>
+        {% for conteudo in disciplina.conteudos %}
+            <li>
+                <strong>{{ conteudo.codigo }}</strong> - {{ conteudo.descricao }}
+            </li>
+        {% else %}
+            <li>Não há nenhum conteudo associado a esta disciplina no momento.</li>
+        {% endfor %}
     <p></p><strong>Habilidades:</strong></p>
+        {% for habilidade in disciplina.habilidades %}
+            <li>
+                <strong>{{ habilidade.codigo }}</strong> - {{ habilidade.descricao }}
+            </li>
+        {% else %}
+            <li>Não há nenhuma habilidade associada a esta disciplina no momento.</li>
+        {% endfor %}
     <br>
+    <a href="/disciplinas/{{disciplina.id_disciplina}}/gerenciar_competencias"> Gerenciar as competências desta disciplina.</a>
     
 
     <br><br>

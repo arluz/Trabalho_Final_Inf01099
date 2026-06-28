@@ -1,0 +1,45 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Gerenciar Competências - {{ disciplina.nome }}{% endblock %}
+
+{% block content %}
+    <h1>Gerenciar Competências</h1>
+    <h2>Disciplina: {{ disciplina.codigo }} - {{ disciplina.nome }}</h2>
+    <p>Área: {{ disciplina.area }}</p>
+    
+    <hr>
+
+    <form method="POST" action="{{ url_for('competencias.gerenciar_competencias', id_disciplina=disciplina.id_disciplina) }}">
+        
+        <h3>Conteúdos Associados</h3>
+        <div class="checkbox-group" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+            {% for conteudo in conteudos %}
+                <label style="display: block; margin-bottom: 8px;">
+                    <input type="checkbox" name="conteudos_ids" value="{{ conteudo.id_conteudo }}"
+                           {% if conteudo in disciplina.conteudos %} checked {% endif %}>
+                    <strong>{{ conteudo.codigo }}</strong> - {{ conteudo.descricao }} ({{ conteudo.essencialidade }})
+                </label>
+            {% else %}
+                <p>Nenhum conteúdo cadastrado no sistema.</p>
+            {% endfor %}
+        </div>
+
+        <h3>Habilidades Associadas</h3>
+        <div class="checkbox-group" style="max-height: 200px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+            {% for habilidade in habilidades %}
+                <label style="display: block; margin-bottom: 8px;">
+                    <input type="checkbox" name="habilidades_ids" value="{{ habilidade.id_habilidade }}"
+                           {% if habilidade in disciplina.habilidades %} checked {% endif %}>
+                    <strong>{{ habilidade.codigo }}</strong> - {{ habilidade.descricao }} [{{ habilidade.proficiencia }}]
+                </label>
+            {% else %}
+                <p>Nenhuma habilidade cadastrada no sistema.</p>
+            {% endfor %}
+        </div>
+
+        <input type="submit" value="Salvar competências" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer;">
+        <a href="/disciplinas/{{disciplina.id_disciplina}}" style="margin-left: 10px; color: #666;">Cancelar</a>
+    </form>
+    <br><br>
+    <a href="/disciplinas">Voltar a lista de disciplinas</a>
+{% endblock %}
