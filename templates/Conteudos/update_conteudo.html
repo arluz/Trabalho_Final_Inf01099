@@ -18,27 +18,32 @@
 
         <label for="essencialidade">Essencialidade:</label>
         <select
-        id="essencialidade" 
-        name="essencialidade"
-        required
-        title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
+            id="essencialidade" 
+            name="essencialidade"
+            required
+            title="O nível de essencialidade deve ser um número entre Eletiva Essencial 1 e 2.">
+            
             <option value="">Selecione...</option>
-            <option value="Eletiva">Eletiva</option>
-            <option value="Essencial 1">Essencial 1</option>
-            <option value="Essencial 2">Essencial 2</option>
+            
+            {% if conteudo is defined %}
+                <option value="Eletiva" {% if conteudo.essencialidade == 'Eletiva' %}selected{% endif %}>Eletiva</option>
+                <option value="Essencial 1" {% if conteudo.essencialidade == 'Essencial 1' %}selected{% endif %}>Essencial 1</option>
+                <option value="Essencial 2" {% if conteudo.essencialidade == 'Essencial 2' %}selected{% endif %}>Essencial 2</option>
+            {% endif %}
         </select>
         <br><br>
 
         <label for="descricao">Descrição:</label>
         <textarea 
             id="descricao" 
-            name="descricao" 
-            value="{{ conteudo.descricao }}"
+            name="descricao"
             required            
-            title="A descrição é obrigatória."></textarea>
+            title="A descrição é obrigatória.">{{ conteudo.descricao }}</textarea>
         <br><br>
 
         <button type="submit">Atualizar</button>
+        <button type="button"
+            onclick="window.location.href='/conteudos/{{ conteudo.id_conteudo }}'">Cancelar</button>
     </form>
     <br><br>
     <p>Para alterar o vinculo deste conteúdo com a disciplina, selecione a disciplina abaixo:</p>

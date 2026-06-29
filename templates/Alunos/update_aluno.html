@@ -17,6 +17,8 @@
         title="A matrícula deve conter apenas números.">>
         <br><br>
         <button type="submit">Atualizar</button>
+        <button type="button"
+            onclick="window.location.href='/alunos/{{ aluno.id_aluno }}'">Cancelar</button>
     </form>
 <br><br>
     <a href="/alunos/{{ aluno.id_aluno }}/delete">Deletar Aluno {{ aluno.nome }} </a>

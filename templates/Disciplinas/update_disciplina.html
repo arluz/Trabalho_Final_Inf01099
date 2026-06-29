@@ -16,7 +16,10 @@
         <input type="text" id="area" name="area" value="{{ disciplina.area }}">
         <br><br>
         <input type="submit" value="Atualizar">
+        <button type="button"
+            onclick="window.location.href='/disciplinas/{{ disciplina.id_disciplina }}'">Cancelar</button>
     </form>
+    <!--<a href="/disciplinas/{{ disciplina.id_disciplina }}">Cancelar</a>-->    
     <br><br>
     <a href="/disciplinas/{{ disciplina.id_disciplina }}/delete">Deletar {{ disciplina.nome }}</a>
     <br><br>

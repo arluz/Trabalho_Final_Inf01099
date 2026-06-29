@@ -71,6 +71,7 @@ class Habilidades(db.Model):
         back_populates='habilidades'
         )
 
+'''
 class DisciplinasConteudos(db.Table):
     __tablename__ = 'disciplinas_conteudos'
 
@@ -90,6 +91,8 @@ class DisciplinasHabilidades(db.Table):
     id_habilidade = db.Column(db.Integer, 
                               db.ForeignKey('habilidades.id_habilidade'), 
                               primary_key=True)
+
+'''
 
 class Turmas(db.Model):
     __tablename__ = 'turmas'
