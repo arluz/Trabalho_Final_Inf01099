@@ -27,8 +27,8 @@ class Disciplinas(db.Model):
 
     id_disciplina = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(100), nullable=False)
-    codigo = db.Column(db.String(10), unique=True, nullable=False)
-    area = db.Column(db.String(2), nullable=False)
+    codigo = db.Column(db.String(20), unique=True, nullable=False)
+    area = db.Column(db.String(2))
 
     conteudos = db.relationship(
         'Conteudos', 
@@ -48,7 +48,7 @@ class Conteudos(db.Model):
     id_conteudo = db.Column(db.Integer, primary_key=True, autoincrement=True)
     codigo = db.Column(db.String(20), unique=True, nullable=False)
     essencialidade = db.Column(db.String(20), nullable=False)
-    descricao = db.Column(db.String(200), nullable=False)
+    descricao = db.Column(db.String(500), nullable=False)
 
     disciplinas = db.relationship(
         'Disciplinas', 
@@ -62,7 +62,7 @@ class Habilidades(db.Model):
     id_habilidade = db.Column(db.Integer, primary_key=True, autoincrement=True)
     codigo = db.Column(db.String(20), unique=True, nullable=False)
     essencialidade = db.Column(db.String(20), nullable=False)
-    descricao = db.Column(db.String(200), nullable=False)
+    descricao = db.Column(db.String(500), nullable=False)
     proficiencia = db.Column(db.String(20), nullable=False)
 
     disciplinas = db.relationship(
