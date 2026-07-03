@@ -79,7 +79,7 @@ def solver_relacionamentos():
         print("-----------------------------------")
 
 #solver_relacionamentos()
-import_relacionamentos_D_C_H()
+#import_relacionamentos_D_C_H()
             
 
 ###########################################
