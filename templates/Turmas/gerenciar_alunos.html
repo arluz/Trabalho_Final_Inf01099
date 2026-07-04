@@ -1,0 +1,65 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Gerenciar Alunos - Turma {{ turma.codigo }}{% endblock %}
+
+{% block content %}
+    <h1>Gerenciar Alunos da Turma {{ disciplina.codigo }} - {{ turma.ano }}/{{ turma.semestre }} - {{ turma.codigo }}</turma></h1>
+    <h2>Disciplina:  - {{ disciplina.nome }}</h2>
+    <p>Turma: <strong>{{ turma.codigo }}</strong> | Período: <strong>{{ turma.ano }}/{{ turma.semestre }}</strong></p>
+    
+    <hr>
+
+    <div style="margin-bottom: 20px;">
+        <label for="busca_aluno" style="display: block; margin-bottom: 5px; font-weight: bold;">🔍 Buscar Aluno (Nome ou Matrícula):</label>
+        <input 
+            list="alunos_list" 
+            id="busca_aluno" 
+            placeholder="Digite para filtrar a lista abaixo..." 
+            style="width: 100%; padding: 8px; border: 1px solid #ccc;"
+        >
+        <datalist id="alunos_list">
+            {% for aluno in alunos %}
+                <option value="{{ aluno.matricula }}">{{ aluno.nome }}</option>
+            {% endfor %}
+        </datalist>
+    </div>
+
+    <form method="POST" action="{{ url_for('turmas.gerenciar_alunos', id_turma=turma.id_turma) }}">
+        
+        <h3>Alunos do Sistema (Marque para matricular / Desmarque para remover)</h3>
+        
+        <div class="checkbox-group" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 20px;">
+            {% for aluno in alunos %}
+                <label class="aluno-item" data-busca="{{ aluno.matricula }} {{ aluno.nome | lower }}" style="display: block; margin-bottom: 8px; padding: 4px; border-bottom: 1px dashed #eee;">
+                    <input type="checkbox" name="alunos_ids" value="{{ aluno.id_aluno }}"
+                           {% if aluno.id_aluno in matriculados_ids %} checked {% endif %}>
+                    <strong>{{ aluno.matricula }}</strong> - {{ aluno.nome }}
+                </label>
+            {% else %}
+                <p>Nenhum aluno cadastrado no sistema.</p>
+            {% endfor %}
+        </div>
+
+        <input type="submit" value="Salvar Alunos da Turma" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer;">
+        <a href="/turmas" style="margin-left: 10px; color: #666;">Cancelar</a>
+    </form>
+
+    <br><br>
+    <a href="/turmas">Voltar à lista de turmas</a>
+
+    <script>
+        document.getElementById('busca_aluno').addEventListener('input', function() {
+            var termoBusca = this.value.toLowerCase();
+            var itens = document.querySelectorAll('.aluno-item');
+            
+            itens.forEach(function(item) {
+                var textoItem = item.getAttribute('data-busca');
+                if (textoItem.includes(termoBusca)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}
