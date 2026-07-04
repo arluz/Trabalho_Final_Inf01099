@@ -1,0 +1,93 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Gerenciar Notas - Turma {{ turma.codigo }}{% endblock %}
+
+{% block content %}
+    <h1>Lançamento de Notas e Conceitos</h1>
+    <h2>Disciplina: {{ disciplina.codigo }} - {{ disciplina.nome }}</h2>
+    <p>Turma: <strong>{{ turma.codigo }}</strong> | Período: <strong>{{ turma.ano }}/{{ turma.semestre }}</strong></p>
+    
+    <hr>
+
+    <form method="POST" action="{{ url_for('turmas.gerenciar_notas', id_turma=turma.id_turma) }}">
+        <div style="overflow-x: auto; margin-bottom: 20px;">
+            <table border="1" style="width: 100%; border-collapse: collapse; min-width: 800px; text-align: left;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 10px; z-index: 2; position: sticky; left: 0; background-color: #f2f2f2;">Aluno</th>
+                        <th style="padding: 10px; text-align: center; width: 100px; background-color: #e3f2fd;">Conceito Final</th>
+                        
+                        {% for cont in conteudos %}
+                            <th style="padding: 10px; text-align: center; font-size: 12px;" title="{{ cont.descricao }}">
+                                Nota Cont.<br><strong>{{ cont.codigo }}</strong>
+                            </th>
+                        {% endfor %}
+
+                        {% for hab in habilidades %}
+                            <th style="padding: 10px; text-align: center; font-size: 12px;" title="{{ hab.descricao }}">
+                                Nota Hab.<br><strong>{{ hab.codigo }}</strong>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in matriculas %}
+                        {% set aluno = alunos_dados[m.id_aluno] %}
+                        <tr>
+                            <td style="padding: 10px; position: sticky; left: 0; background-color: white; border-right: 2px solid #ddd; font-weight: bold;">
+                                {{ aluno.nome }} <br>
+                                <span style="font-size: 11px; color: #777;">Matrícula: {{ aluno.matricula }}</span>
+                            </td>
+
+                            <td style="padding: 10px; text-align: center; background-color: #f5fafd;">
+                                <select name="conceito_{{ m.id_aluno_turma }}" style="padding: 5px; width: 80px; text-align: center;">
+                                    <option value="" {% if m.conceito is none %} selected {% endif %}>-</option>
+                                    <option value="A" {% if m.conceito == 'A' %} selected {% endif %}>A</option>
+                                    <option value="B" {% if m.conceito == 'B' %} selected {% endif %}>B</option>
+                                    <option value="C" {% if m.conceito == 'C' %} selected {% endif %}>C</option>
+                                    <option value="D" {% if m.conceito == 'D' %} selected {% endif %}>D</option>
+                                    <option value="FF" {% if m.conceito == 'FF' %} selected {% endif %}>FF</option>
+                                </select>
+                            </td>
+
+                            {% for cont in conteudos %}
+                                {% set nota_atual = notas_cont[m.id_aluno_turma].get(cont.id_conteudo, '') %}
+                                <td style="padding: 10px; text-align: center;">
+                                    <input type="number" step="0.1" min="0" max="10" 
+                                           name="nota_cont_{{ m.id_aluno_turma }}_{{ cont.id_conteudo }}" 
+                                           value="{{ nota_atual }}" 
+                                           style="width: 60px; padding: 5px; text-align: center;">
+                                </td>
+                            {% endfor %}
+
+                            {% for hab in habilidades %}
+                                {% set nota_atual = notas_hab[m.id_aluno_turma].get(hab.id_habilidade, '') %}
+                                <td style="padding: 10px; text-align: center;">
+                                    <input type="number" step="0.1" min="0" max="10" 
+                                           name="nota_hab_{{ m.id_aluno_turma }}_{{ hab.id_habilidade }}" 
+                                           value="{{ nota_atual }}" 
+                                           style="width: 60px; padding: 5px; text-align: center;">
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="{{ 2 + (conteudos|length) + (habilidades|length) }}" style="padding: 20px; text-align: center; color: #777;">
+                                Nenhum aluno matriculado nesta turma para lançar notas.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if matriculas %}
+            <input type="submit" value="Salvar Notas da Planilha" style="padding: 10px 20px; background-color: #28a745; color: white; border: none; cursor: pointer; font-size: 16px;">
+        {% endif %}
+        <a href="{{ url_for('turmas.get_turma', id_turma=turma.id_turma) }}">Cancelar</a>        
+    </form>
+    <br><br>
+    <a href="/turmas/{{ turma.id_turma }}">Voltar para Visualizar Turma</a>
+    <br><br>
+    <a href="/turmas">Voltar a lista de turmas</a>
+{% endblock %}

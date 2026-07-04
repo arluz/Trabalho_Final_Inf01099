@@ -1,0 +1,85 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Histórico Escolar - {{ aluno.nome }}{% endblock %}
+
+{% block content %}
+    <h1>Histórico Escolar</h1>
+    <h2>Aluno: {{ aluno.nome }}</h2>
+    <p>Matrícula: <strong>{{ aluno.matricula }}</strong></p>
+    
+    <hr>
+
+    <h3>Disciplinas Cursadas e Em Andamento</h3>
+    
+    {% if historico %}
+        <table border="1" style="width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px; width: 15%;">Período</th>
+                    <th style="padding: 10px; width: 35%;">Disciplina</th>
+                    <th style="padding: 10px; text-align: center; width: 10%;">Turma</th>
+                    <th style="padding: 10px; text-align: center; width: 15%;">Conceito Final</th>
+                    <th style="padding: 10px; width: 25%;">Notas Detalhadas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for linha in historico %}
+                    <tr {% if linha.conceito_final == 'Em andamento' %} style="background-color: #fcf8e3;" {% endif %}>
+                        <td style="padding: 10px;"><strong>{{ linha.periodo }}</strong></td>
+                        
+                        <td style="padding: 10px;">
+                            <strong>{{ linha.disciplina_codigo }}</strong> - {{ linha.disciplina_nome }}
+                        </td>
+                        
+                        <td style="padding: 10px; text-align: center;">{{ linha.turma_codigo }}</td>
+                        
+                        <td style="padding: 10px; text-align: center; font-weight: bold;">
+                            <span style="padding: 4px 8px; border-radius: 4px; 
+                                {% if linha.conceito_final in ['A', 'B', 'C'] %} color: #27ae60;
+                                {% elif linha.conceito_final == 'D' %} color: #d35400;
+                                {% elif linha.conceito_final == 'FF' %} color: #c0392b;
+                                {% else %} color: #f39c12; {% endif %}">
+                                {{ linha.conceito_final }}
+                            </span>
+                        </td>
+                        
+                        <td style="padding: 10px; font-size: 13px;">
+                            {% if linha.notas_conteudos %}
+                                <div style="margin-bottom: 5px;">
+                                    <strong>Conteúdos:</strong><br>
+                                    {% for nc in linha.notas_conteudos %}
+                                        <span style="background: #eee; padding: 2px 5px; margin-right: 4px; border-radius: 3px; display: inline-block;">
+                                            {{ nc.codigo }}: {{ nc.nota }}
+                                        </span>
+                                        <br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            {% if linha.notas_habilidades %}
+                                <div>
+                                    <strong>Habilidades:</strong><br>
+                                    {% for nh in linha.notas_habilidades %}
+                                        <span style="background: #e3f2fd; padding: 2px 5px; margin-right: 4px; border-radius: 3px; display: inline-block;">
+                                            {{ nh.codigo }}: {{ nh.nota }}
+                                        </span><br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            {% if not linha.notas_conteudos and not linha.notas_habilidades %}
+                                <span style="color: #999; font-style: italic;">Sem notas lançadas</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="color: #7f8c8d;">Este aluno não possui nenhuma matrícula registrada.</p>
+    {% endif %}
+    <br><br>
+    <a href="/alunos/{{ aluno.id_aluno }}">Voltar para Visualizar Aluno</a>
+    <br>
+    <a href="/alunos">Voltar para Lista de Alunos</a>
+{% endblock %}

@@ -76,3 +76,51 @@ def delete_aluno(id_aluno):
             models.db.session.rollback()
             flash(f"Erro ao deletar aluno {aluno.nome}.", "error")
             return redirect(url_for('alunos.get_aluno', id_aluno=id_aluno))
+
+@alunos_bp.route("/<int:id_aluno>/historico", methods=['GET'])
+def visualizar_historico_aluno(id_aluno):
+    aluno = models.Alunos.query.get_or_404(id_aluno)
+    
+    # 1. Busca todas as turmas em que o aluno está ou esteve matriculado
+    matriculas = models.ALunosTurmas.query.filter_by(id_aluno=id_aluno).all()
+    
+    # Estrutura para agrupar os dados que vão para a tabela
+    historico_completo = []
+    
+    for m in matriculas:
+        # Busca os dados da turma e da disciplina relacionada
+        turma = models.Turmas.query.get(m.id_turma)
+        disciplina = models.Disciplinas.query.get(turma.id_disciplina)
+        
+        # 2. Busca todas as notas de conteúdos deste aluno nesta turma específica
+        notas_cont = models.NotasConteudos.query.filter_by(id_aluno_turma=m.id_aluno_turma).all()
+        # Busca os objetos de Conteúdos para saber os nomes/códigos das notas
+        dados_cont = [
+            {"codigo": models.Conteudos.query.get(n.id_conteudo).codigo, "nota": n.nota}
+            for n in notas_cont if models.Conteudos.query.get(n.id_conteudo)
+        ]
+        
+        # 3. Busca todas as notas de habilidades deste aluno nesta turma específica
+        notas_hab = models.NotasHabilidades.query.filter_by(id_aluno_turma=m.id_aluno_turma).all()
+        # Busca os objetos de Habilidades para saber os nomes/códigos das notas
+        dados_hab = [
+            {"codigo": models.Habilidades.query.get(n.id_habilidade).codigo, "nota": n.nota}
+            for n in notas_hab if models.Habilidades.query.get(n.id_habilidade)
+        ]
+        
+        # Junta tudo em um dicionário organizado por linha de disciplina
+        historico_completo.append({
+            "disciplina_codigo": disciplina.codigo,
+            "disciplina_nome": disciplina.nome,
+            "turma_codigo": turma.codigo,
+            "periodo": f"{turma.ano}/{turma.semestre}",
+            "conceito_final": m.conceito if m.conceito else "Em andamento",
+            "notas_conteudos": dados_cont,
+            "notas_habilidades": dados_hab
+        })
+
+    return render_template(
+        'Alunos/historico_aluno.html',
+        aluno=aluno,
+        historico=historico_completo
+    )

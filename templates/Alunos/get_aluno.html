@@ -7,6 +7,7 @@
     <p><strong>ID:</strong> {{ aluno.id_aluno }}</p>
     <p><strong>Nome:</strong> {{ aluno.nome }}</p>
     <p><strong>Matrícula:</strong> {{ aluno.matricula }}</p>
+    <a href="/alunos/{{ aluno.id_aluno }}/historico">Visualizar Histórico de Notas</a>
     <br><br>
     <a href="/alunos/{{ aluno.id_aluno }}/update">Editar Aluno {{ aluno.nome }}</a>
     <br><br>

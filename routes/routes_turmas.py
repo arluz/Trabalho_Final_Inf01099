@@ -1,76 +1,103 @@
-from flask import Flask, Blueprint, request, render_template, redirect, url_for, abort, flash
+from flask import (
+    Flask,
+    Blueprint,
+    request,
+    render_template,
+    redirect,
+    url_for,
+    abort,
+    flash,
+)
 from sqlalchemy.exc import IntegrityError
 import models
 from models import db, Turmas, Disciplinas, ALunosTurmas, Alunos
 
-turmas_bp = Blueprint('turmas', __name__, url_prefix='/turmas')
+turmas_bp = Blueprint("turmas", __name__, url_prefix="/turmas")
+
 
 @turmas_bp.route("")
 def list_turmas():
-    turmas_com_disciplinas = db.session.query(
-        models.Turmas, models.Disciplinas).join(
-        models.Disciplinas, models.Turmas.id_disciplina == models.Disciplinas.id_disciplina
-    ).all()
-    
-    todas_disciplinas = models.Disciplinas.query.all()
-    return render_template('Turmas/list_turmas.html', 
-                           turmas=turmas_com_disciplinas, 
-                           disciplinas=todas_disciplinas)
+    turmas_com_disciplinas = (
+        db.session.query(models.Turmas, models.Disciplinas)
+        .join(
+            models.Disciplinas,
+            models.Turmas.id_disciplina == models.Disciplinas.id_disciplina,
+        )
+        .all()
+    )
 
-@turmas_bp.route("/create", methods=['GET', 'POST'])
+    todas_disciplinas = models.Disciplinas.query.all()
+    return render_template(
+        "Turmas/list_turmas.html",
+        turmas=turmas_com_disciplinas,
+        disciplinas=todas_disciplinas,
+    )
+
+
+@turmas_bp.route("/create", methods=["GET", "POST"])
 def create_turma():
     disciplinas = models.Disciplinas.query.all()
 
-    if request.method == 'GET':
-        return render_template('/Turmas/create_turma.html', disciplinas=disciplinas)
+    if request.method == "GET":
+        return render_template("/Turmas/create_turma.html", disciplinas=disciplinas)
 
-    if request.method == 'POST':
-        id_disciplina = request.form.get('id_disciplina')        
-        codigo = request.form.get('codigo', '').strip().upper()
-        #ano = request.form.get('ano', '').strip()
-        semestre = request.form.get('semestre', '').strip()
+    if request.method == "POST":
+        id_disciplina = request.form.get("id_disciplina")
+        codigo = request.form.get("codigo", "").strip().upper()
+        # ano = request.form.get('ano', '').strip()
+        semestre = request.form.get("semestre", "").strip()
 
         if not id_disciplina or not codigo or not semestre:
             flash("Todos os campos são obrigatórios.", "danger")
-            return render_template('/Turmas/create_turma.html')
-        
+            return render_template("/Turmas/create_turma.html")
+
         # Busca a disciplina no banco para pegar o ID correto através do código vindo do HTML
         disciplina = models.Disciplinas.query.filter_by(codigo=id_disciplina).first()
         if not disciplina:
             flash("Disciplina selecionada inválida.", "danger")
-            return render_template('/Turmas/create_turma.html', disciplinas=disciplinas)
-        
+            return render_template("/Turmas/create_turma.html", disciplinas=disciplinas)
+
         try:
-            ano_str, sem_str = semestre.split('/')
+            ano_str, sem_str = semestre.split("/")
             ano_str = int(ano_str)
             sem_str = int(sem_str)
         except ValueError:
-            flash("Formato de semestre inválido. Use o padrão ANO/SEMESTRE (Ex: 2026/1).", "danger")
-            return render_template('/Turmas/create_turma.html', disciplinas=disciplinas)
-    
+            flash(
+                "Formato de semestre inválido. Use o padrão ANO/SEMESTRE (Ex: 2026/1).",
+                "danger",
+            )
+            return render_template("/Turmas/create_turma.html", disciplinas=disciplinas)
+
         try:
             nova_turma = models.Turmas(
                 id_disciplina=disciplina.id_disciplina,
                 codigo=codigo,
                 ano=ano_str,
-                semestre=sem_str
+                semestre=sem_str,
             )
             models.db.session.add(nova_turma)
             models.db.session.commit()
             flash(f"Turma {codigo} criada com sucesso!", "success")
-            return redirect(url_for('turmas.list_turmas'))
+            return redirect(url_for("turmas.list_turmas"))
 
         except IntegrityError:
             models.db.session.rollback()
             flash("Erro ao criar turma.", "danger")
-            return render_template('/Turmas/create_turma.html', disciplinas=disciplinas)
+            return render_template("/Turmas/create_turma.html", disciplinas=disciplinas)
+
 
 @turmas_bp.route("/<int:id_turma>")
 def get_turma(id_turma):
-    #Busca disciplina e a turma correspondente usando JOIN
-    resultado = db.session.query(models.Turmas, models.Disciplinas).join(
-        models.Disciplinas, models.Turmas.id_disciplina == models.Disciplinas.id_disciplina
-    ).filter(models.Turmas.id_turma == id_turma).first()
+    # Busca disciplina e a turma correspondente usando JOIN
+    resultado = (
+        db.session.query(models.Turmas, models.Disciplinas)
+        .join(
+            models.Disciplinas,
+            models.Turmas.id_disciplina == models.Disciplinas.id_disciplina,
+        )
+        .filter(models.Turmas.id_turma == id_turma)
+        .first()
+    )
 
     if not resultado:
         abort(404, description="Turma não encontrada")
@@ -78,119 +105,136 @@ def get_turma(id_turma):
     turma, disciplina = resultado
 
     # Busca as matrículas desta turma trazendo os dados dos alunos associados
-    lista_matriculas = db.session.query(ALunosTurmas, Alunos).join(
-        Alunos, ALunosTurmas.id_aluno == Alunos.id_aluno
-    ).filter(ALunosTurmas.id_turma == id_turma).all()
+    lista_matriculas = (
+        db.session.query(ALunosTurmas, Alunos)
+        .join(Alunos, ALunosTurmas.id_aluno == Alunos.id_aluno)
+        .filter(ALunosTurmas.id_turma == id_turma)
+        .all()
+    )
 
-    return render_template('Turmas/get_turma.html', 
-                           turma=turma,
-                           disciplina=disciplina,
-                           lista_matriculas=lista_matriculas)
+    return render_template(
+        "Turmas/get_turma.html",
+        turma=turma,
+        disciplina=disciplina,
+        lista_matriculas=lista_matriculas,
+    )
 
-@turmas_bp.route("/<int:id_turma>/update", methods=['GET', 'POST'])
+
+@turmas_bp.route("/<int:id_turma>/update", methods=["GET", "POST"])
 def update_turma(id_turma):
 
     turma = models.Turmas.query.get_or_404(id_turma)
     disciplinas = models.Disciplinas.query.all()
 
-    if request.method == 'GET':         
+    if request.method == "GET":
         disciplina_atual = models.Disciplinas.query.get(turma.id_disciplina)
         semestre_formatado = f"{turma.ano}/{turma.semestre}"
-        return render_template('/Turmas/update_turma.html', 
-                           turma=turma,  
-                           disciplinas=disciplinas, 
-                           disciplina_atual=disciplina_atual,
-                           semestre_formatado=semestre_formatado)
+        return render_template(
+            "/Turmas/update_turma.html",
+            turma=turma,
+            disciplinas=disciplinas,
+            disciplina_atual=disciplina_atual,
+            semestre_formatado=semestre_formatado,
+        )
 
-    if request.method == 'POST':
-        codigo_disciplina = request.form.get('id_disciplina', '').strip()        
-        codigo = request.form.get('codigo', '').strip().upper()
-        semestre_raw = request.form.get('semestre', '').strip()
+    if request.method == "POST":
+        codigo_disciplina = request.form.get("id_disciplina", "").strip()
+        codigo = request.form.get("codigo", "").strip().upper()
+        semestre_raw = request.form.get("semestre", "").strip()
 
         if not codigo_disciplina or not codigo or not semestre_raw:
             flash("Todos os campos são obrigatórios.", "danger")
-            return redirect(url_for('turmas.update_turma', id_turma=id_turma))
+            return redirect(url_for("turmas.update_turma", id_turma=id_turma))
 
-        disciplina = models.Disciplinas.query.filter_by(codigo=codigo_disciplina).first()
+        disciplina = models.Disciplinas.query.filter_by(
+            codigo=codigo_disciplina
+        ).first()
         if not disciplina:
             flash("Disciplina selecionada inválida.", "danger")
-            return redirect(url_for('turmas.update_turma', id_turma=id_turma))
+            return redirect(url_for("turmas.update_turma", id_turma=id_turma))
 
         try:
-            ano_str, sem_str = semestre_raw.split('/')
+            ano_str, sem_str = semestre_raw.split("/")
             ano_num = int(ano_str)
             sem_num = int(sem_str)
         except ValueError:
-            flash("Formato de semestre inválido. Use o padrão ANO/SEMESTRE (Ex: 2026/1).", "danger")
-            return redirect(url_for('turmas.update_turma', id_turma=id_turma))
+            flash(
+                "Formato de semestre inválido. Use o padrão ANO/SEMESTRE (Ex: 2026/1).",
+                "danger",
+            )
+            return redirect(url_for("turmas.update_turma", id_turma=id_turma))
 
         try:
             turma.id_disciplina = disciplina.id_disciplina
             turma.codigo = codigo
             turma.ano = ano_num
             turma.semestre = sem_num
-            
+
             models.db.session.commit()
             flash(f"Turma {codigo} atualizada com sucesso!", "success")
-            return redirect(url_for('turmas.list_turmas'))
+            return redirect(url_for("turmas.list_turmas"))
 
         except IntegrityError:
             models.db.session.rollback()
-            flash("Erro ao atualizar: O código informado já está em uso por outra turma.", "danger")
-            return redirect(url_for('turmas.update_turma', id_turma=id_turma))
-        
-@turmas_bp.route("/<int:id_turma>/delete", methods=['GET', 'POST'])
+            flash(
+                "Erro ao atualizar: O código informado já está em uso por outra turma.",
+                "danger",
+            )
+            return redirect(url_for("turmas.update_turma", id_turma=id_turma))
+
+
+@turmas_bp.route("/<int:id_turma>/delete", methods=["GET", "POST"])
 def delete_turma(id_turma):
     turma = models.Turmas.query.get_or_404(id_turma)
 
-    if request.method == 'GET':
-        return render_template('/Turmas/delete_turma.html', turma=turma)
+    if request.method == "GET":
+        return render_template("/Turmas/delete_turma.html", turma=turma)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         try:
             models.db.session.delete(turma)
             models.db.session.commit()
             flash(f"Turma {turma.codigo} deletada com sucesso!", "success")
-            return redirect(url_for('turmas.list_turmas'))
+            return redirect(url_for("turmas.list_turmas"))
         except IntegrityError:
             models.db.session.rollback()
             flash("Erro ao deletar turma.", "danger")
-            return redirect(url_for('turmas.list_turmas'))
+            return redirect(url_for("turmas.list_turmas"))
 
-@turmas_bp.route("/<int:id_turma>/gerenciar_alunos", methods=['GET', 'POST'])
+
+@turmas_bp.route("/<int:id_turma>/gerenciar_alunos", methods=["GET", "POST"])
 def gerenciar_alunos(id_turma):
     turma = models.Turmas.query.get_or_404(id_turma)
-    
-    if request.method == 'GET':
+
+    if request.method == "GET":
         # Busca a disciplina para exibir bonito na página
         disciplina = models.Disciplinas.query.get(turma.id_disciplina)
         todos_alunos = models.Alunos.query.all()
         matriculados_ids = [
-            a.id_aluno for a in models.ALunosTurmas.query.filter_by(id_turma=id_turma).all()
+            a.id_aluno
+            for a in models.ALunosTurmas.query.filter_by(id_turma=id_turma).all()
         ]
         return render_template(
-            'Turmas/gerenciar_alunos.html',
+            "Turmas/gerenciar_alunos.html",
             turma=turma,
             alunos=todos_alunos,
             matriculados_ids=matriculados_ids,
-            disciplina=disciplina
+            disciplina=disciplina,
         )
 
-    if request.method == 'POST':
+    if request.method == "POST":
         # IDs que o usuário marcou na tela (desejados)
-        ids_vinda_form = set(int(x) for x in request.form.getlist('alunos_ids'))
-        
+        ids_vinda_form = set(int(x) for x in request.form.getlist("alunos_ids"))
+
         # O que já existe no banco atualmente
         matriculas_atuais = models.ALunosTurmas.query.filter_by(id_turma=id_turma).all()
         ids_no_banco = set(m.id_aluno for m in matriculas_atuais)
 
         try:
             # 1. ADICIONAR: Quem está no form mas não está no banco
-            for id_aluno in (ids_vinda_form - ids_no_banco):
+            for id_aluno in ids_vinda_form - ids_no_banco:
                 nova_matricula = models.ALunosTurmas(
-                    id_turma=id_turma,
-                    id_aluno=id_aluno,
-                    conceito=None
+                    id_turma=id_turma, id_aluno=id_aluno, conceito=None
                 )
                 models.db.session.add(nova_matricula)
 
@@ -199,15 +243,117 @@ def gerenciar_alunos(id_turma):
                 if matricula.id_aluno not in ids_vinda_form:
                     # Trava de segurança: Se já tiver nota, não deixa apagar por acidente
                     if matricula.conceito is not None:
-                        flash(f"Não foi possível remover alguns alunos pois eles já possuem conceito lançado.", "warning")
+                        flash(
+                            f"Não foi possível remover alguns alunos pois eles já possuem conceito lançado.",
+                            "warning",
+                        )
                         continue
                     models.db.session.delete(matricula)
 
             models.db.session.commit()
-            flash('Alunos da turma atualizados com segurança!', 'success')
-            return redirect(url_for('turmas.get_turma', id_turma=id_turma))
-        
+            flash("Alunos da turma atualizados com segurança!", "success")
+            return redirect(url_for("turmas.get_turma", id_turma=id_turma))
+
         except IntegrityError:
             models.db.session.rollback()
-            flash('Erro ao salvar as alterações.', 'danger')
-            return redirect(url_for('turmas.gerenciar_alunos', id_turma=id_turma))
+            flash("Erro ao salvar as alterações.", "danger")
+            return redirect(url_for("turmas.gerenciar_alunos", id_turma=id_turma))
+
+
+@turmas_bp.route("/<int:id_turma>/gerenciar_notas", methods=["GET", "POST"])
+def gerenciar_notas(id_turma):
+    turma = models.Turmas.query.get_or_404(id_turma)
+    disciplina = models.Disciplinas.query.get(turma.id_disciplina)
+
+    # Busca os conteúdos e habilidades vinculados a esta disciplina específica
+    conteudos = disciplina.conteudos if hasattr(disciplina, "conteudos") else []
+    habilidades = disciplina.habilidades if hasattr(disciplina, "habilidades") else []
+
+    # Busca os alunos matriculados nesta turma
+    matriculas = models.ALunosTurmas.query.filter_by(id_turma=id_turma).all()
+
+    if request.method == "GET":
+        # Dicionários para mapear as notas existentes e preencher a planilha rapidamente
+        notas_cont_fatiadas = {}
+        notas_hab_fatiadas = {}
+
+        for m in matriculas:
+            # Pega as notas de conteúdo do aluno nesta turma
+            n_cont = models.NotasConteudos.query.filter_by(
+                id_aluno_turma=m.id_aluno_turma
+            ).all()
+            notas_cont_fatiadas[m.id_aluno_turma] = {
+                n.id_conteudo: n.nota for n in n_cont
+            }
+
+            # Pega as notas de habilidade do aluno nesta turma
+            n_hab = models.NotasHabilidades.query.filter_by(
+                id_aluno_turma=m.id_aluno_turma
+            ).all()
+            notas_hab_fatiadas[m.id_aluno_turma] = {
+                n.id_habilidade: n.nota for n in n_hab
+            }
+
+        # Busca dados dos alunos (nomes) para exibir na tabela
+        alunos_dados = {a.id_aluno: a for a in models.Alunos.query.all()}
+
+        return render_template(
+            "Turmas/gerenciar_notas.html",
+            turma=turma,
+            disciplina=disciplina,
+            matriculas=matriculas,
+            alunos_dados=alunos_dados,
+            conteudos=conteudos,
+            habilidades=habilidades,
+            notas_cont=notas_cont_fatiadas,
+            notas_hab=notas_hab_fatiadas,
+        )
+    
+    if request.method == 'POST':
+        try:
+            for m in matriculas:
+                # 1. Atualiza o Conceito Geral da Turma (A, B, C, D, FF ou None/Vazio)
+                col_conceito = request.form.get(f'conceito_{m.id_aluno_turma}', '').strip().upper()
+                m.conceito = col_conceito if col_conceito in ['A', 'B', 'C', 'D', 'FF'] else None
+
+                # 2. Atualiza ou Cria as Notas dos Conteúdos
+                for cont in conteudos:
+                    nota_raw = request.form.get(f'nota_cont_{m.id_aluno_turma}_{cont.id_conteudo}', '').strip()
+                    
+                    # Busca se já existe nota para esse conteúdo, se não, cria uma nova
+                    nota_obj = models.NotasConteudos.query.filter_by(
+                        id_aluno_turma=m.id_aluno_turma, id_conteudo=cont.id_conteudo
+                    ).first()
+
+                    if nota_raw != '':
+                        if not nota_obj:
+                            nota_obj = models.NotasConteudos(id_aluno_turma=m.id_aluno_turma, id_conteudo=cont.id_conteudo)
+                            models.db.session.add(nota_obj)
+                        nota_obj.nota = float(nota_raw)
+                    elif nota_obj:
+                        models.db.session.delete(nota_obj) # Se o usuário apagar a nota e salvar, remove do banco
+
+                # 3. Atualiza ou Cria as Notas das Habilidades
+                for hab in habilidades:
+                    nota_raw = request.form.get(f'nota_hab_{m.id_aluno_turma}_{hab.id_habilidade}', '').strip()
+                    
+                    nota_obj = models.NotasHabilidades.query.filter_by(
+                        id_aluno_turma=m.id_aluno_turma, id_habilidade=hab.id_habilidade
+                    ).first()
+
+                    if nota_raw != '':
+                        if not nota_obj:
+                            nota_obj = models.NotasHabilidades(id_aluno_turma=m.id_aluno_turma, id_habilidade=hab.id_habilidade)
+                            models.db.session.add(nota_obj)
+                        nota_obj.nota = float(nota_raw)
+                    elif nota_obj:
+                        models.db.session.delete(nota_obj)
+
+            models.db.session.commit()
+            flash('Notas e conceitos atualizados com sucesso!', 'success')
+            return redirect(url_for('turmas.get_turma', id_turma=id_turma))
+
+        except Exception:
+            models.db.session.rollback()
+            flash('Erro ao salvar as notas. Verifique os valores inseridos.', 'danger')
+            return redirect(url_for('turmas.gerenciar_notas', id_turma=id_turma))
