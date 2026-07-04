@@ -1,0 +1,32 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Listar Turmas{% endblock %}
+
+{% block content %}
+    <h1>Lista de Turmas</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>                
+                <th>Disciplina</th>
+                <th>Código</th>
+                <th>Ano</th>
+                <th>Semestre</th>
+            </tr>               
+        </thead>
+        <tbody>
+            {% for turma, disciplina in turmas %}
+            <tr>
+                <td>{{ turma.id_turma }}</td>
+                <td>{{ disciplina.nome }}</td>
+                <td><a href="/turmas/{{ turma.id_turma }}">{{ turma.codigo }}</a></td>
+                <td>{{ turma.ano }}</td>
+                <td>{{ turma.semestre }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br><br>
+    <a href="/turmas/create">Criar Nova Turma</a>
+{% endblock %}

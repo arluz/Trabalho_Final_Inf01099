@@ -1,0 +1,19 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Remover Turma{% endblock %}
+
+{% block content %}
+    <h1>Deletar Turma</h1>
+    <p>Tem certeza que deseja <strong>DELETAR</strong> esta turma?</p>
+
+    <form method="post">
+        <button type="submit">Confirmar Exclusão</button>
+        <br><br>
+        <a href="/turmas/{{ turma.id_turma }}">Cancelar</a>
+    </form>
+
+    <br><br>
+    <a href="/turmas/{{ turma.id_turma }}/update">Editar Turma {{ turma.codigo }}</a>
+    <br><br>
+    <a href="/turmas">Voltar a lista de turmas</a>
+{% endblock %}

@@ -56,6 +56,7 @@ def update_habilidade(id_habilidade):
         habilidade.essencialidade = request.form.get('essencialidade')
         habilidade.descricao = request.form.get('descricao')
         habilidade.proficiencia = request.form.get('proficiencia')
+
         models.db.session.commit()
         flash(f"Habilidade {habilidade.codigo} atualizada com sucesso!", "success")
         return redirect(url_for('habilidades.list_habilidades'))
@@ -77,3 +78,4 @@ def delete_habilidade(id_habilidade):
     except IntegrityError:
         models.db.session.rollback()
         flash(f"Erro ao deletar habilidade {habilidade.codigo}. Verifique se ela esta associada a alguma disciplina.", "error")
+        return redirect(url_for('habilidades.list_habilidades'))

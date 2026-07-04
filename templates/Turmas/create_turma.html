@@ -1,0 +1,46 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Criar Nova Turma{% endblock %}
+
+{% block content %}
+    <h1>Criar Nova Turma</h1>
+    <form method="POST" action="/turmas/create">
+        <label for="disciplina_input">Disciplina:</label>
+        <input
+            list="disciplinas_list"
+            id = "disciplina_input"
+            name = "id_disciplina"            
+            placeholder="Digite o nome ou código ..."
+            required
+            >
+            <datalist id="disciplinas_list">
+                {% for d in disciplinas %}
+                    <option value="{{ d.codigo }}">{{ d.nome }}</option>
+                {% endfor %}
+            </datalist>
+
+        <label for="codigo">Código:</label>
+        <input
+            id = "codigo"
+            name = "codigo"
+            maxlength="1"
+            pattern="[A-Z]"
+            title="O código deve ser apenas uma única letra maiúscula. (Ex: 'A','B, etc.')"
+            placeholder="EX: A"
+            required
+            >
+        <label for="semestre">Semestre:</label>
+        <input
+            id = "semestre"
+            name = "semestre"
+            title="O formato deve ser o ano com 4 dígitos seguido de barra e o semestre. Ex: 2026/1"
+            placeholder="Ex: 2026/1"
+            required
+            >
+        <br><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <br><br>
+    <a href="/turmas">Voltar a lista de turmas</a>
+{% endblock %}

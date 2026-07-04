@@ -1,0 +1,43 @@
+{% extends 'base_crud.html' %}
+
+{% block title %}Ver Turma{% endblock %}
+
+{% block content %}
+    <h1>Ver Turma</h1>
+    <p><strong>ID:</strong> {{ turma.id_turma }}</p>
+    <p><strong>Código:</strong> {{ turma.codigo }}</p>
+    <p><strong>Disciplina:</strong> {{ disciplina.nome }}</p>
+    <p><strong>Ano:</strong> {{ turma.ano }}</p>
+    <p><strong>Semestre:</strong> {{ turma.semestre }}</p>
+
+    <h1>Lista de Alunos Matriculados Nesta Turma</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Matrícula</th>
+                <th>Nome do Aluno</th>
+                <th>Conceito Final</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for matricula, aluno in lista_matriculas %}
+            <tr>
+                <td>{{ aluno.matricula }}</td>
+                <td>{{ aluno.nome }}</td>
+                <td>{{ matricula.conceito if matricula.conceito else 'Em andamento' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center;">Nenhum aluno matriculado nesta turma.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br><br>
+    <a href="/turmas/{{ turma.id_turma }}/update">Editar Turma {{ turma.codigo }}</a>
+    <br><br>
+    <a href="/turmas/{{ turma.id_turma }}/delete">Deletar Turma {{ turma.codigo }}</a>
+    <br><br>
+    <a href="/turmas">Voltar a lista de turmas</a>
+{% endblock %}

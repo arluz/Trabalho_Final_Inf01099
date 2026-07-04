@@ -5,27 +5,27 @@
 {% block content %}
     <h1>Cadastrar Novo Aluno</h1>
     <form method="POST" action="/alunos/create">
-    <label for="nome">Nome:</label>
-    <input 
-        id="nome" 
-        name="nome" 
-        required 
-        minlength="2"
-        pattern="^[A-Za-zÀ-ÿ\s]+$" 
-        title="O nome deve conter apenas letras e espaços. Números e caracteres especiais não são permitidos.">
-    <br><br>
-    
-    <label for="matricula">Matrícula:</label>
-    <input 
-        type="text" 
-        id="matricula" 
-        name="matricula" 
-        required
-        pattern="\d+"
-        title="A matrícula deve conter apenas números.">
-    <br><br>
-    
-    <button type="submit">Cadastrar</button>
+        <label for="nome">Nome:</label>
+        <input 
+            id="nome" 
+            name="nome" 
+            required 
+            minlength="2"
+            pattern="^[A-Za-zÀ-ÿ\s]+$" 
+            title="O nome deve conter apenas letras e espaços. Números e caracteres especiais não são permitidos.">
+        <br><br>
+        
+        <label for="matricula">Matrícula:</label>
+        <input 
+            type="text" 
+            id="matricula" 
+            name="matricula" 
+            required
+            pattern="\d+"
+            title="A matrícula deve conter apenas números.">
+        <br><br>
+        
+        <button type="submit">Cadastrar</button>
 </form>
 <br>
     <a href="/alunos">Voltar a lista de alunos</a>

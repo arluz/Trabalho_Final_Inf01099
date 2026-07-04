@@ -34,7 +34,8 @@ def gerenciar_competencias(id_disciplina):
             
             models.db.session.commit()
             flash('Competências atualizadas com sucesso!', 'success')
-            return redirect(url_for('disciplinas.get_disciplina', id_disciplina=id_disciplina))
+            return redirect(url_for('disciplinas.get_disciplina', 
+                                    id_disciplina=id_disciplina))
         
         except IntegrityError:
             models.db.session.rollback()

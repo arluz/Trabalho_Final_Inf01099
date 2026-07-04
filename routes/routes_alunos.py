@@ -66,12 +66,13 @@ def delete_aluno(id_aluno):
     if request.method == 'GET':
         return render_template('Alunos/delete_aluno.html', aluno=aluno)
     
-    try:
-        models.db.session.delete(aluno)
-        models.db.session.commit()
-        flash(f"Aluno {aluno.nome} deletado com sucesso!", "success")
-        return redirect(url_for('alunos.list_alunos'))
-    except IntegrityError:
-        models.db.session.rollback()
-        flash(f"Erro ao deletar aluno {aluno.nome}.", "error")
-        return redirect(url_for('alunos.get_aluno', id_aluno=id_aluno))
+    if request.method == 'POST':
+        try:
+            models.db.session.delete(aluno)
+            models.db.session.commit()
+            flash(f"Aluno {aluno.nome} deletado com sucesso!", "success")
+            return redirect(url_for('alunos.list_alunos'))
+        except IntegrityError:
+            models.db.session.rollback()
+            flash(f"Erro ao deletar aluno {aluno.nome}.", "error")
+            return redirect(url_for('alunos.get_aluno', id_aluno=id_aluno))

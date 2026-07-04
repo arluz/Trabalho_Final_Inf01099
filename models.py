@@ -72,7 +72,7 @@ class Habilidades(db.Model):
         )
 
 '''
-class DisciplinasConteudos(db.Table):
+class DisciplinasConteudos(db.Model):
     __tablename__ = 'disciplinas_conteudos'
 
     id_disciplina = db.Column(db.Integer,
@@ -82,7 +82,7 @@ class DisciplinasConteudos(db.Table):
                             db.ForeignKey('conteudos.id_conteudo'), 
                             primary_key=True)
 
-class DisciplinasHabilidades(db.Table):
+class DisciplinasHabilidades(db.Model):
     __tablename__ = 'disciplinas_habilidades'
 
     id_disciplina = db.Column(db.Integer,
@@ -105,7 +105,7 @@ class Turmas(db.Model):
     ano = db.Column(db.Integer, nullable=False)
     semestre = db.Column(db.Integer, nullable=False)
 
-class ALunoTurmas(db.Model):
+class ALunosTurmas(db.Model):
     __tablename__ = 'aluno_turma'
 
     __table_args__ = (
