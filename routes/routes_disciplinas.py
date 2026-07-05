@@ -56,7 +56,7 @@ def update_disciplina(id_disciplina):
         disciplina.area = request.form.get('area')
         models.db.session.commit()
         flash(f"Disciplina {disciplina.nome} atualizada com sucesso!", "success")
-        return redirect(url_for('disciplinas.list_disciplinas'))
+        return render_template('Disciplinas/get_disciplina.html', disciplina=disciplina)
     
 @disciplinas_bp.route("/<int:id_disciplina>/delete", methods=['GET', 'POST'])
 def delete_disciplina(id_disciplina):

@@ -96,12 +96,16 @@ class DisciplinasHabilidades(db.Model):
 
 class Turmas(db.Model):
     __tablename__ = 'turmas'
+    
+    __table_args__ = (
+        db.UniqueConstraint('codigo', 'ano', 'semestre', name='unique_codigo_periodo'),
+    )
 
     id_turma = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_disciplina = db.Column(db.Integer, 
                               db.ForeignKey('disciplinas.id_disciplina'), 
                               nullable=False)
-    codigo = db.Column(db.String(20), unique=True, nullable=False)
+    codigo = db.Column(db.String(20), unique=False, nullable=False)
     ano = db.Column(db.Integer, nullable=False)
     semestre = db.Column(db.Integer, nullable=False)
 
