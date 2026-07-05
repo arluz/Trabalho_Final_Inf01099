@@ -98,7 +98,7 @@ class Turmas(db.Model):
     __tablename__ = 'turmas'
     
     __table_args__ = (
-        db.UniqueConstraint('codigo', 'ano', 'semestre', name='unique_codigo_periodo'),
+    db.UniqueConstraint('id_disciplina', 'codigo', 'ano', 'semestre', name='unique_codigo_periodo'),
     )
 
     id_turma = db.Column(db.Integer, primary_key=True, autoincrement=True)
