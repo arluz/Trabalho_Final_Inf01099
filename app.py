@@ -8,6 +8,7 @@ from routes.routes_turmas import turmas_bp
 from routes.routes_conteudos import conteudos_bp
 from routes.routes_habilidades import habilidades_bp
 from routes.routes_competencias import competencias_bp
+from routes.routes_dashboard import dashboard_bp
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ app.register_blueprint(turmas_bp)
 app.register_blueprint(conteudos_bp)
 app.register_blueprint(habilidades_bp)
 app.register_blueprint(competencias_bp)
+app.register_blueprint(dashboard_bp)
 
 with app.app_context():
     models.db.create_all()

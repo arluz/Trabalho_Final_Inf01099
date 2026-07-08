@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trajetórias Acadêmicas 3D</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="grafico3d" style="width:100%; height:90vh;"></div>
+
+    <script type="text/javascript">
+        var graphs = {{ graph_json | safe }};
+        Plotly.newPlot('grafico3d', graphs.data, graphs.layout);
+    </script>
+</body>
+</html>

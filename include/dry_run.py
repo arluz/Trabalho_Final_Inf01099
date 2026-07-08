@@ -28,7 +28,7 @@ def simular_sem_banco():
     with open("arvore_historica.txt", "w", encoding="utf-8") as f:
         for ano, semestre in periodos:
             f.write(f"\n========================================\n")
-            f.write(f"⏳ PERÍODO CALENDÁRIO: {ano}/{semestre}\n")
+            f.write(f" PERÍODO CALENDÁRIO: {ano}/{semestre}\n")
             f.write(f"========================================\n")
 
             novos = 0
@@ -38,7 +38,7 @@ def simular_sem_banco():
                     historico_alunos[id_aluno] = {"semestre_atual": 1, "disciplinas_concluidas": set()}
                     ponteiro_aluno += 1
                     novos += 1
-            f.write(f"📥 [Ingressantes]: {novos} novos alunos começaram (Ponteiro geral: {ponteiro_aluno}).\n")
+            f.write(f"- [Ingressantes]: {novos} novos alunos começaram (Ponteiro geral: {ponteiro_aluno}).\n")
 
             for num_semestre_grade, disciplinas_do_semestre in enumerate(FLUXO_CURRICULAR, start=1):
                 for nome_disc in disciplinas_do_semestre:
@@ -65,9 +65,9 @@ def simular_sem_banco():
                             aprovados += 1
                         else:
                             reprovados += 1
-                            f.write(f"      ↳ 🔄 Aluno ID {id_aluno} rodou e ficou retido nesta matéria.\n")
+                            f.write(f"      - Aluno ID {id_aluno} rodou e ficou retido nesta matéria.\n")
 
-                    f.write(f"      📊 Resultado: {aprovados} Aprovados | {reprovados} Reprovados\n")
+                    f.write(f"       Resultado: {aprovados} Aprovados | {reprovados} Reprovados\n")
 
             # Atualização de Semestre da Grade
             for id_aluno, dados in list(historico_alunos.items()):
@@ -95,12 +95,12 @@ def simular_sem_banco():
         for id_auditoria in alunos_auditoria:
             if id_auditoria in historico_alunos:
                 dados = historico_alunos[id_auditoria]
-                f.write(f"\n🎓 Histórico do Aluno ID: {id_auditoria}\n")
+                f.write(f"\n Histórico do Aluno ID: {id_auditoria}\n")
                 f.write(f"   Último Semestre alcançado na Grade: {dados['semestre_atual']}º Sem\n")
                 f.write(f"   Total de Disciplinas Concluídas: {len(dados['disciplinas_concluidas'])}\n")
                 f.write(f"   IDs das matérias limpas: {sorted(list(dados['disciplinas_concluidas']))}\n")
 
-    print("📁 Arquivo 'arvore_historica.txt' gerado com sucesso!")
+    print(" Arquivo 'arvore_historica.txt' gerado com sucesso!")
 
 if __name__ == "__main__":
     simular_sem_banco()

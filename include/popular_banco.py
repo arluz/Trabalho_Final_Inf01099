@@ -85,7 +85,7 @@ def rodar_simulacao_completa():
         mapeamento_disciplinas = {d.nome.strip().upper(): d.id_disciplina for d in models.db.session.query(models.Disciplinas).all()}
         todos_alunos = models.db.session.query(models.Alunos).order_by(models.Alunos.id_aluno).all()
         
-        print(f"📊 [INFO] Alunos carregados: {len(todos_alunos)} | Disciplinas carregadas: {len(mapeamento_disciplinas)}")
+        print(f" [INFO] Alunos carregados: {len(todos_alunos)} | Disciplinas carregadas: {len(mapeamento_disciplinas)}")
         
         periodos = [(ano, sem) for ano in range(2016, 2026) for sem in [1, 2]] + [(2026, 1)]
         historico_alunos = {}
@@ -105,7 +105,7 @@ def rodar_simulacao_completa():
                     historico_alunos[aluno.id_aluno] = {"semestre_atual": 1, "disciplinas_concluidas": set()}
                     ponteiro_aluno += 1
 
-            print(f"⏳ Processando Período: {ano}/{semestre} | Alunos ativos no sistema: {len(historico_alunos)}")
+            print(f" Processando Período: {ano}/{semestre} | Alunos ativos no sistema: {len(historico_alunos)}")
 
             # Distribuição nas turmas
             for num_semestre_grade, disciplinas_do_semestre in enumerate(FLUXO_CURRICULAR, start=1):
@@ -113,7 +113,7 @@ def rodar_simulacao_completa():
                     id_disc = mapeamento_disciplinas.get(nome_disc.strip().upper())
                     if not id_disc:
                         # Se o print abaixo aparecer, a string ainda está desalinhada
-                        # print(f"⚠️ Alerta: Disciplina '{nome_disc}' não encontrada no banco.")
+                        # print(f" Alerta: Disciplina '{nome_disc}' não encontrada no banco.")
                         continue
 
                     alunos_aptos = [
@@ -149,15 +149,15 @@ def rodar_simulacao_completa():
                             total_matriculas_geradas += 1
 
                     except Exception as e:
-                        print(f"❌ Erro ao estruturar turma/matrícula na memória: {e}")
+                        print(f" Erro ao estruturar turma/matrícula na memória: {e}")
                         models.db.session.rollback()
 
             # Força o commit do semestre corrente
             try:
                 models.db.session.commit()
-                print(f"   ✅ Semestre {ano}/{semestre} gravado com sucesso no banco!")
+                print(f"   Semestre {ano}/{semestre} gravado com sucesso no banco!")
             except Exception as e:
-                print(f"❌ ERRO CRÍTICO NO COMMIT de {ano}/{semestre}: {e}")
+                print(f" ERRO CRÍTICO NO COMMIT de {ano}/{semestre}: {e}")
                 models.db.session.rollback()
 
             # Progressão dos alunos
@@ -175,7 +175,7 @@ def rodar_simulacao_completa():
                 if all(d_id in dados["disciplinas_concluidas"] for d_id in disciplinas_esperadas):
                     historico_alunos[id_aluno]["semestre_atual"] += 1
 
-        print(f"\n🏁 Resumo Final da Execução:")
+        print(f"\n Resumo Final da Execução:")
         print(f"   - Total de Turmas enviadas ao banco: {total_turmas_geradas}")
         print(f"   - Total de Matrículas enviadas ao banco: {total_matriculas_geradas}")
         
