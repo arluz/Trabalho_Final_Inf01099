@@ -4,28 +4,38 @@
 
 {% block content %}
     <h1>Lista de Turmas</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>ID</th>                
-                <th>Disciplina</th>
-                <th>Código</th>
-                <th>Ano</th>
-                <th>Semestre</th>
-            </tr>               
-        </thead>
-        <tbody>
-            {% for turma, disciplina in turmas %}
-            <tr>
-                <td>{{ turma.id_turma }}</td>
-                <td>{{ disciplina.nome }}</td>
-                <td><a href="/turmas/{{ turma.id_turma }}">{{ turma.codigo }}</a></td>
-                <td>{{ turma.ano }}</td>
-                <td>{{ turma.semestre }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    {# Agrupa a lista de tuplas (turma, disciplina) pelo atributo ano da turma #}
+    {% for ano, grupo_ano in turmas|groupby('0.ano') %}
+        <details style="margin-bottom: 15px; border: 1px solid #ccc; padding: 10px; border-radius: 4px;">
+            <summary style="font-size: 1.2em; font-weight: bold; cursor: pointer; padding: 5px;">
+                Ano: {{ ano }} ({{ grupo_ano|length }} turmas)
+            </summary>
+            
+            <table border="1" style="width: 100%; margin-top: 10px; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th>ID</th>                
+                        <th>Disciplina</th>
+                        <th>Código</th>
+                        <th>Semestre</th>
+                    </tr>               
+                </thead>
+                <tbody>
+                    {% for item in grupo_ano %}
+                        {% set turma = item[0] %}
+                        {% set disciplina = item[1] %}
+                        <tr>
+                            <td>{{ turma.id_turma }}</td>
+                            <td>{{ disciplina.nome }}</td>
+                            <td><a href="/turmas/{{ turma.id_turma }}">{{ turma.codigo }}</a></td>
+                            <td>{{ turma.semestre }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </details>
+    {% endfor %}
 
     <br><br>
     <a href="/turmas/create">Criar Nova Turma</a>

@@ -1,76 +1,127 @@
-import random
 from app import app, models
+import random
 
-def mapear_nota_por_conceito(conceito):
-    """Gera notas numéricas com 8% de chance de comportamentos inesperados (zebras)."""
-    if random.random() < 0.08:
-        return random.uniform(0.0, 10.0)
+def gerar_nota_por_conceito(conceito):
+    """
+    Retorna uma nota numérica realista correspondente ao conceito.
+    """
+    if conceito == 'FF':
+        return 0.0
     
-    mapeamento = {
-        'A': random.uniform(9.0, 10.0),
-        'B': random.uniform(7.5, 8.9),
-        'C': random.uniform(6.0, 7.4),
-        'D': random.uniform(3.0, 5.9),
-        'FF': random.uniform(0.0, 2.9),
+    faixas = {
+        'A': (8.5, 10.0),
+        'B': (7.5, 8.4),
+        'C': (6.0, 7.4),
+        'D': (3.0, 5.9)
     }
-    return mapeamento.get(conceito, random.uniform(0.0, 6.0))
+    min_nota, max_nota = faixas.get(conceito, (0.0, 10.0))
+    return round(random.uniform(min_nota, max_nota), 1)
 
-def popular_notas_conteudos_habilidades():
+
+def popular_notas_de_matriculas_existentes():
+    print("\n========================================================")
+    print("INICIANDO PREENCHIMENTO DE NOTAS PARA MATRÍCULAS EXISTENTES")
+    print(" (Consultas diretas via Joins - Sem alterar o models.py)")
+    print("========================================================")
+    
     with app.app_context():
-        print(" Iniciando a geração de notas com base no models.py...")
+        # 1. Busca todas as matrículas ativas com conceito
+        matriculas = (
+            models.db.session.query(models.ALunosTurmas)
+            .filter(models.ALunosTurmas.conceito.isnot(None))
+            .all()
+        )
+        
+        total_matriculas = len(matriculas)
+        print(f"Total de matrículas com conceitos encontradas no banco: {total_matriculas}")
+        
+        if total_matriculas == 0:
+            print("Nenhuma matrícula encontrada para processar.")
+            return
 
-        # 1. Carrega as matrículas
-        matriculas = models.db.session.query(models.ALunosTurmas).all()
-        print(f"Total de matrículas (aluno_turma) para processar: {len(matriculas)}")
+        notas_conteudo_criadas = 0
+        notas_habilidade_criadas = 0
+        matriculas_processadas = 0
 
-        total_notas_inseridas = 0
-        contador_lote = 0
-
-        for matricula in matriculas:
-            # 2. Busca a turma e a disciplina correspondente usando os relacionamentos corretos
-            turma = models.db.session.get(models.Turmas, matricula.id_turma)
-            if not turma:
-                continue
-
-            disciplina = models.db.session.get(models.Disciplinas, turma.id_disciplina)
-            if not disciplina:
-                continue
-
-            # 3. Lê as coleções many-to-many configuradas no models.py direto do objeto Disciplina
-            conteudos = disciplina.conteudos
-            habilidades = disciplina.habilidades
-
-            # 4. Grava notas de Conteúdos usando a chave estrangeira correta: id_aluno_turma
-            for cont in conteudos:
-                nota_num = mapear_nota_por_conceito(matricula.conceito)
-                nova_nota_cont = models.NotasConteudos(
-                    id_aluno_turma=matricula.id_aluno_turma, # Campo corrigido
-                    id_conteudo=cont.id_conteudo,
-                    nota=round(nota_num, 1)
+        for mat in matriculas:
+            with models.db.session.no_autoflush:
+                # 2. Descobre o id_disciplina associado a essa matrícula fazendo join manual
+                id_disciplina = (
+                    models.db.session.query(models.Turmas.id_disciplina)
+                    .filter(models.Turmas.id_turma == mat.id_turma)
+                    .scalar()
                 )
-                models.db.session.add(nova_nota_cont)
-                total_notas_inseridas += 1
+                
+                if not id_disciplina:
+                    continue
 
-            # 5. Grava notas de Habilidades usando a chave estrangeira correta: id_aluno_turma
-            for hab in habilidades:
-                nota_num = mapear_nota_por_conceito(matricula.conceito)
-                nova_nota_hab = models.NotasHabilidades(
-                    id_aluno_turma=matricula.id_aluno_turma, # Campo corrigido
-                    id_habilidade=hab.id_habilidade,
-                    nota=round(nota_num, 1)
+                # 3. Busca os Conteúdos associados a essa disciplina através da tabela de associação disciplinas_conteudos
+                conteudos_da_disciplina = (
+                    models.db.session.query(models.Conteudos)
+                    .join(models.disciplinas_conteudos, models.Conteudos.id_conteudo == models.disciplinas_conteudos.c.id_conteudo)
+                    .filter(models.disciplinas_conteudos.c.id_disciplina == id_disciplina)
+                    .all()
                 )
-                models.db.session.add(nova_nota_hab)
-                total_notas_inseridas += 1
 
-            # Otimização de commits em lote de 200 em 200 registros
-            contador_lote += 1
-            if contador_lote % 200 == 0:
+                # 4. Busca as Habilidades associadas a essa disciplina através da tabela de associação disciplinas_habilidades
+                habilidades_da_disciplina = (
+                    models.db.session.query(models.Habilidades)
+                    .join(models.disciplinas_habilidades, models.Habilidades.id_habilidade == models.disciplinas_habilidades.c.id_habilidade)
+                    .filter(models.disciplinas_habilidades.c.id_disciplina == id_disciplina)
+                    .all()
+                )
+
+                # --- GERAR NOTAS DE CONTEÚDOS ---
+                for cont in conteudos_da_disciplina:
+                    # Evita duplicados verificando a existência prévia
+                    existe = models.db.session.query(models.NotasConteudos).filter_by(
+                        id_aluno_turma=mat.id_aluno_turma,
+                        id_conteudo=cont.id_conteudo
+                    ).first()
+                    
+                    if not existe:
+                        nota_num = gerar_nota_por_conceito(mat.conceito)
+                        models.db.session.add(models.NotasConteudos(
+                            id_aluno_turma=mat.id_aluno_turma,
+                            id_conteudo=cont.id_conteudo,
+                            nota=nota_num
+                        ))
+                        notas_conteudo_criadas += 1
+
+                # --- GERAR NOTAS DE HABILIDADES ---
+                for hab in habilidades_da_disciplina:
+                    # Evita duplicados verificando a existência prévia
+                    existe = models.db.session.query(models.NotasHabilidades).filter_by(
+                        id_aluno_turma=mat.id_aluno_turma,
+                        id_habilidade=hab.id_habilidade
+                    ).first()
+                    
+                    if not existe:
+                        nota_num = gerar_nota_por_conceito(mat.conceito)
+                        models.db.session.add(models.NotasHabilidades(
+                            id_aluno_turma=mat.id_aluno_turma,
+                            id_habilidade=hab.id_habilidade,
+                            nota=nota_num
+                        ))
+                        notas_habilidade_criadas += 1
+            
+            matriculas_processadas += 1
+            
+            # Commit em blocos de 100 registros para garantir ótimo desempenho
+            if matriculas_processadas % 100 == 0:
                 models.db.session.commit()
-                print(f" Progresso: {contador_lote} matrículas salvas... ({total_notas_inseridas} notas criadas)")
+                print(f" -> {matriculas_processadas}/{total_matriculas} matrículas processadas...")
 
-        # Salva o restante dos dados
+        # Salva qualquer registro remanescente
         models.db.session.commit()
-        print(f"\n Sucesso absoluto! Total de {total_notas_inseridas} notas geradas com nuances reais e consistentes.")
+        
+        print("\n========================================================")
+        print("[SUCESSO] Processamento de Notas Concluído!")
+        print(f" -> Matrículas analisadas: {matriculas_processadas}")
+        print(f" -> Notas de Conteúdos criadas: {notas_conteudo_criadas}")
+        print(f" -> Notas de Habilidades criadas: {notas_habilidade_criadas}")
+        print("========================================================")
+
 
 if __name__ == "__main__":
-    popular_notas_conteudos_habilidades()
+    popular_notas_de_matriculas_existentes()

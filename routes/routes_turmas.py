@@ -23,6 +23,7 @@ def list_turmas():
             models.Disciplinas,
             models.Turmas.id_disciplina == models.Disciplinas.id_disciplina,
         )
+        .order_by(models.Turmas.ano.desc(), models.Turmas.semestre)
         .all()
     )
 
@@ -52,7 +53,8 @@ def create_turma():
             return render_template("/Turmas/create_turma.html")
 
         # Busca a disciplina no banco para pegar o ID correto através do código vindo do HTML
-        disciplina = models.Disciplinas.query.filter_by(codigo=id_disciplina).first()
+        #disciplina = models.Disciplinas.query.filter_by(codigo=id_disciplina).first()
+        disciplina = models.db.session.get(models.Disciplinas, int(id_disciplina))
         if not disciplina:
             flash("Disciplina selecionada inválida.", "danger")
             return render_template("/Turmas/create_turma.html", disciplinas=disciplinas)
@@ -146,9 +148,8 @@ def update_turma(id_turma):
             flash("Todos os campos são obrigatórios.", "danger")
             return redirect(url_for("turmas.update_turma", id_turma=id_turma))
 
-        disciplina = models.Disciplinas.query.filter_by(
-            codigo=codigo_disciplina
-        ).first()
+        #disciplina = models.Disciplinas.query.filter_by(codigo=codigo_disciplina).first()
+        disciplina = models.db.session.get(models.Disciplinas, int(id_disciplina))
         if not disciplina:
             flash("Disciplina selecionada inválida.", "danger")
             return redirect(url_for("turmas.update_turma", id_turma=id_turma))
