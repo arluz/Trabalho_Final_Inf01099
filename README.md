@@ -1,4 +1,4 @@
-# Trabalho_Final_Inf01099
+# Trabalho_Final_INF01006
 Site desenvolvido em docker+postgres+flask/python para visualização de notas e competencias dos alunos ao longo do curso Ciência da Computação da UFRGS
 
 Para rodar basta inserir os comandos no terminal:

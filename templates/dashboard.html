@@ -4,12 +4,44 @@
 
 {% block content %}
 
-    <h1>Painel de Monitoramento de Desempenho</h1>
-    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-        <div><img src="data:image/png;base64,{{ graph_declinio }}"></div>
-        <div><img src="data:image/png;base64,{{ graph_oscilacao }}"></div>
-        <div><img src="data:image/png;base64,{{ graph_curriculo }}"></div>
-        <div><img src="data:image/png;base64,{{ graph_evolucao }}"></div>
+<div class="container-fluid px-0 py-2">
+    <h1 class="mb-4">Painel de Monitoramento de Desempenho</h1>
+   
+
+    <!-- Grid de Coluna Única Ocupando a Horizontal -->
+    <div class="row g-4">
+        <div class="col-12">
+            
+            <!-- Card 1: Histórico Semestral -->
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    {{ grafico_barras|safe }}
+                </div>
+            </div>
+            <div style="height: 50px;"></div>
+            <!-- Card 2: Heatmap Global -->
+            <div class="card shadow-sm mb-5">
+                <div class="card-body">
+                    {{ grafico_heatmap|safe }}
+                </div>
+            </div>
+
+            <div style="height: 50px;"></div>
+            <!-- Card 3: matrículas -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {{ grafico_matriculas|safe }}
+                </div>
+            </div>
+
+             
+    <!-- Link para a trajetória individual -->
+    <div class="mb-4">
+        <a href="/dashboard/trajetoria" class="btn btn-outline-primary">Gráfico de trajetória individual de aluno</a>
     </div>
+
+        </div>
+    </div>
+</div>
 
 {% endblock %}
